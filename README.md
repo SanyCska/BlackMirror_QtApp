@@ -1,5 +1,5 @@
 # BlackMirror_QtApp
-__This part, of project, called "BlackMirror", responsible for visualization different aplication wigits.__
+__This part of project, called "BlackMirror", responsible for visualization different aplication wigits.__
 
 **_Realization_**: Qt5 + Python IDE PyCharm + QtDesigner
 
