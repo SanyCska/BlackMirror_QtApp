@@ -5,7 +5,7 @@
 # Created by: PyQt5 UI code generator 5.6
 
 
-from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5 import QtCore, QtWidgets
 
 
 class Ui_MainWindow(object):
