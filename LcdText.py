@@ -21,7 +21,7 @@ class Ui_Form(object):
 
         self.pushButton = QtWidgets.QPushButton(Form)
         self.pushButton.setGeometry(QtCore.QRect(40, 690, 181, 81))
-        self.pushButton.setObjectName("Show Weather")
+        self.pushButton.setObjectName("PushButton")
         self.pushButton.pressed.connect(self.show_all)
 
         self.load_weather()
@@ -32,7 +32,7 @@ class Ui_Form(object):
     def retranslateUi(self, Form):
         _translate = QtCore.QCoreApplication.translate
         Form.setWindowTitle(_translate("Form", "Form"))
-        self.pushButton.setText(_translate("Form", "PushButton"))
+        self.pushButton.setText(_translate("Form", "Show Weather"))
 
     def hide_lcd(self):
         self.lcdNumber.hide()
