@@ -1,4 +1,5 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
+from time import strftime
 from weather import Weather
 from threading import Thread #Потоки
 from PyQt5.QtCore import QObject, pyqtSignal
@@ -6,7 +7,7 @@ from socket import *
 import sys
 
 HOST = 'localhost'  # адрес хоста (сервера) пустой означает использование любого доступного адреса
-PORT = 21110  # номер порта на котором работает сервер (от 0 до 65525, порты до 1024 зарезервированы для системы, порты TCP и UDP не пересекаются)
+PORT = 21111  # номер порта на котором работает сервер (от 0 до 65525, порты до 1024 зарезервированы для системы, порты TCP и UDP не пересекаются)
 BUFSIZ = 1024  # размер буфера 1Кбайт
 ADDR = (HOST, PORT)  # адрес сервера
 tcpSerSock = socket(AF_INET, SOCK_STREAM)
@@ -14,7 +15,7 @@ tcpSerSock.bind(ADDR)  # связываем сокет с адресом
 tcpSerSock.listen(5)  # устанавливаем максимальное число клиентов одновременно обслуживаемых
 
 class Ui_Form(object):
-
+    city = ''
     def setupUi(self, Form):
         Form.setObjectName("Form")
         Form.setStyleSheet('background-color: black')
@@ -34,6 +35,11 @@ class Ui_Form(object):
         self.lcdNumber.setObjectName("lcdNumber")
         self.hide_lcd()
 
+        self.timer = QtCore.QTimer(Form)
+        self.timer.timeout.connect(self.Time)
+        self.timer.start(1000)
+        self.lcd = QtWidgets.QLCDNumber(Form)
+        self.lcd.setGeometry(QtCore.QRect(290, 20, 561, 361))
 
         self.textEdit = QtWidgets.QTextEdit(Form)
         self.textEdit.setGeometry(QtCore.QRect(340, 300, 261, 200))
@@ -72,6 +78,9 @@ class Ui_Form(object):
         self.label_4.setObjectName("label_4")
         self.label_4.hide()
 
+
+
+
         self.retranslateUi(Form)
         QtCore.QMetaObject.connectSlotsByName(Form)
 
@@ -90,12 +99,16 @@ class Ui_Form(object):
         self.city = string
         print(self.city)
 
+    def Time(self):
+        self.lcd.display(strftime("%H"+":"+"%M"))
+
     def show_all(self):
         weather = Weather()
-        location = weather.lookup_by_location('Moscow')
+        location = weather.lookup_by_location(self.city)
         condition = location.condition()
         temp = (int(condition.temp()) - 32) * 5 // 9
         self.lcdNumber.display(temp)
+        self.lcd.display(strftime("%H" + ":" + "%M"))
         text = str(condition.text())
         print(text)
         if 'loudy' in text:
@@ -115,6 +128,7 @@ class Ui_Form(object):
         self.textEdit.setText(text)
         self.lcdNumber.show()
         self.textEdit.show()
+
 
 class MyThread(Thread):
     def __init__(self, f):
