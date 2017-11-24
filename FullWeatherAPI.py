@@ -4,6 +4,8 @@ from weather import Weather
 from threading import Thread #Потоки
 from PyQt5.QtCore import QObject, pyqtSignal
 from socket import *
+from urllib.request import urlopen
+from bs4 import BeautifulSoup
 import sys
 
 HOST = 'localhost'  # адрес хоста (сервера) пустой означает использование любого доступного адреса
@@ -38,8 +40,11 @@ class Ui_Form(object):
         self.timer = QtCore.QTimer(Form)
         self.timer.timeout.connect(self.Time)
         self.timer.start(1000)
+
         self.lcd = QtWidgets.QLCDNumber(Form)
-        self.lcd.setGeometry(QtCore.QRect(290, 20, 561, 361))
+        self.lcd.setGeometry(QtCore.QRect(1000, 20, 561, 361))
+        self.lcd.setStyleSheet('background-color: black;'
+                               'color: white')
 
         self.textEdit = QtWidgets.QTextEdit(Form)
         self.textEdit.setGeometry(QtCore.QRect(340, 300, 261, 200))
@@ -50,6 +55,16 @@ class Ui_Form(object):
         self.textEdit.setFont(QtGui.QFont('Segoe UI Black', 24))
         self.textEdit.setObjectName("textEdit")
         self.hide_text()
+
+        self.textEdit2 = QtWidgets.QTextEdit(Form)
+        self.textEdit2.setGeometry(QtCore.QRect(1000, 300, 1000, 700))
+        self.textEdit2.setReadOnly(True)
+        self.textEdit2.setStyleSheet('background-color: black;'
+                                    'border-style: solid;'
+                                    'color: white')
+        self.textEdit2.setFont(QtGui.QFont('Segoe UI Black', 12))
+        self.textEdit2.setObjectName("textEdit2")
+        self.News()
 
         self.pushButton = QtWidgets.QPushButton(Form)
         self.pushButton.setStyleSheet('background-color: grey')
@@ -78,9 +93,6 @@ class Ui_Form(object):
         self.label_4.setObjectName("label_4")
         self.label_4.hide()
 
-
-
-
         self.retranslateUi(Form)
         QtCore.QMetaObject.connectSlotsByName(Form)
 
@@ -101,6 +113,17 @@ class Ui_Form(object):
 
     def Time(self):
         self.lcd.display(strftime("%H"+":"+"%M"))
+
+    def News(self):
+        html = urlopen('https://yandex.ru')
+        bsObj = BeautifulSoup(html.read(), 'html.parser')
+        news = bsObj.div.ol.findAll("a")
+        news_list = []
+        news_string = ""
+        for each in news:
+            news_list.append(each.text)
+            news_string = news_string + ("● " + each.text + "\n\n")
+        self.textEdit2.setText(news_string)
 
     def show_all(self):
         weather = Weather()
