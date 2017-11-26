@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1847</width>
+    <height>1513</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <widget class="QLabel" name="Snow">
+    <property name="geometry">
+     <rect>
+      <x>810</x>
+      <y>110</y>
+      <width>181</width>
+      <height>181</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>TextLabel</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="Sun">
+    <property name="geometry">
+     <rect>
+      <x>810</x>
+      <y>110</y>
+      <width>181</width>
+      <height>181</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>TextLabel</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="Rain">
+    <property name="geometry">
+     <rect>
+      <x>810</x>
+      <y>110</y>
+      <width>181</width>
+      <height>181</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>TextLabel</string>
+    </property>
+   </widget>
+   <widget class="QLCDNumber" name="TempLCD">
+    <property name="geometry">
+     <rect>
+      <x>100</x>
+      <y>-10</y>
+      <width>681</width>
+      <height>451</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLCDNumber" name="ClockLDC">
+    <property name="geometry">
+     <rect>
+      <x>1080</x>
+      <y>-10</y>
+      <width>681</width>
+      <height>451</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QTextEdit" name="Schedule">
+    <property name="geometry">
+     <rect>
+      <x>1230</x>
+      <y>450</y>
+      <width>531</width>
+      <height>991</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QTextEdit" name="Weather">
+    <property name="geometry">
+     <rect>
+      <x>800</x>
+      <y>300</y>
+      <width>201</width>
+      <height>81</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QTextEdit" name="News">
+    <property name="geometry">
+     <rect>
+      <x>310</x>
+      <y>450</y>
+      <width>811</width>
+      <height>981</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="Cloud">
+    <property name="geometry">
+     <rect>
+      <x>810</x>
+      <y>110</y>
+      <width>181</width>
+      <height>181</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>TextLabel</string>
+    </property>
+   </widget>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>1847</width>
+     <height>38</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
