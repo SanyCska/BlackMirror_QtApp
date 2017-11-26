@@ -1,11 +1,11 @@
 # BlackMirror_QtApp
-__This part of project, called "BlackMirror", responsible for visualization different aplication wigits.__
+__This part of project called "BlackMirror" is responsible for visualization of different application widgets.__
 
 **_Realization_**: Qt5 + Python IDE PyCharm + QtDesigner
 
-**_Min functionality_**: FULLSCREEN application with a button on the center. Pushing it, we have changing of the background and adding new button nearly. Realization of new buttom and new background will have to be in different functions!!!
+**_Min functionality_**: Full-screen application with a button in the center. Pushing, we change background color and add new button nearly. Realizations of the button and background color are in different functions.
 
 
-The link on our tasks and technologies: https://docs.google.com/document/d/1070gjJ0Abqiw6bE-praQ4MmI3ssNBRZAb98kY8rrrrw/edit
+List of technologies which we are using and our tasks: https://docs.google.com/document/d/1070gjJ0Abqiw6bE-praQ4MmI3ssNBRZAb98kY8rrrrw/edit
 
 

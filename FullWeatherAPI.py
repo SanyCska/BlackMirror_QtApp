@@ -127,7 +127,7 @@ class Ui_Form(object):
 
     def show_all(self):
         weather = Weather()
-        location = weather.lookup_by_location(self.city)
+        location = weather.lookup_by_location('Moscow')
         condition = location.condition()
         temp = (int(condition.temp()) - 32) * 5 // 9
         self.lcdNumber.display(temp)
