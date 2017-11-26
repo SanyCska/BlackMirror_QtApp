@@ -149,7 +149,6 @@ class Ui_MainWindow(object):
         self.TempLCD.display(temp)
         self.ClockLCD.display(strftime("%H" + ":" + "%M"))
         text = str(condition.text())
-        print(text)
         if 'loudy' in text:
             self.Cloud.show()
         else:
