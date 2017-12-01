@@ -18,6 +18,7 @@ tcpSerSock.listen(5)  # устанавливаем максимальное чи
 
 class Ui_MainWindow(object):
     city = ''
+    greeting = 'Welcome to our app'
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.setStyleSheet('background-color: black')
@@ -67,14 +68,24 @@ class Ui_MainWindow(object):
         self.ClockLCD.setObjectName("ClockLDC")
         self.ClockLCD.hide()
 
-        self.Schedule = QtWidgets.QTextEdit(self.centralwidget)
-        self.Schedule.setGeometry(QtCore.QRect(1230, 450, 531, 991))
-        self.Schedule.setReadOnly(True)
-        self.Schedule.setStyleSheet('background-color: black;'
+        self.Welcome = QtWidgets.QTextEdit(self.centralwidget)
+        self.Welcome.setGeometry(QtCore.QRect(QtCore.QRect(1230, 450, 531, 991)))
+        self.Welcome.setReadOnly(True)
+        self.Welcome.setStyleSheet('background-color: black;'
                                 'border-style: solid;'
                                 'color: white')
-        self.Schedule.setFont(QtGui.QFont('Segoe UI Black', 12))
-        self.Schedule.setObjectName("Schedule")
+        self.Welcome.setFont(QtGui.QFont('Segoe UI Black', 18))
+        self.Welcome.setObjectName("Welcome")
+        self.Welcome.hide()
+        #
+        # self.Schedule = QtWidgets.QTextEdit(self.centralwidget)
+        # self.Schedule.setGeometry(QtCore.QRect(1230, 450, 531, 991))
+        # self.Schedule.setReadOnly(True)
+        # self.Schedule.setStyleSheet('background-color: black;'
+        #                         'border-style: solid;'
+        #                         'color: white')
+        # self.Schedule.setFont(QtGui.QFont('Segoe UI Black', 12))
+        # self.Schedule.setObjectName("Schedule")
 
         self.Weather = QtWidgets.QTextEdit(self.centralwidget)
         self.Weather.setGeometry(QtCore.QRect(600, 300, 300, 100))
@@ -112,6 +123,7 @@ class Ui_MainWindow(object):
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
+        self.getWelcome()
         self.getNews()
         self.getTime()
         self.showWeather()
@@ -140,6 +152,11 @@ class Ui_MainWindow(object):
             news_string = news_string + ("● " + each.text + "\n\n")
         self.News.setText(news_string)
         self.News.show()
+
+    def getWelcome(self):
+
+        self.Welcome.setText(self.greeting)
+        self.Welcome.show()
 
     def showWeather(self):
         weather = Weather()

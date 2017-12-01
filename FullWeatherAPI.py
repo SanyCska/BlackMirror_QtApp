@@ -8,7 +8,7 @@ from urllib.request import urlopen
 from bs4 import BeautifulSoup
 import sys
 
-HOST = '192.168.43.190'  # адрес хоста (сервера) пустой означает использование любого доступного адреса
+HOST = 'localhost'  # адрес хоста (сервера) пустой означает использование любого доступного адреса
 PORT = 21110  # номер порта на котором работает сервер (от 0 до 65525, порты до 1024 зарезервированы для системы, порты TCP и UDP не пересекаются)
 BUFSIZ = 1024  # размер буфера 1Кбайт
 ADDR = (HOST, PORT)  # адрес сервера
@@ -18,6 +18,7 @@ tcpSerSock.listen(5)  # устанавливаем максимальное чи
 
 class Ui_Form(object):
     city = ''
+    greeting = 'Welcome to our app'
     def setupUi(self, Form):
         Form.setObjectName("Form")
         Form.setStyleSheet('background-color: black')
@@ -65,6 +66,17 @@ class Ui_Form(object):
         self.textEdit2.setFont(QtGui.QFont('Segoe UI Black', 12))
         self.textEdit2.setObjectName("textEdit2")
         self.News()
+
+
+        self.Welcome = QtWidgets.QTextEdit(Form)
+        self.Welcome.setGeometry(QtCore.QRect(1080, 450, 200, 200))
+        self.Welcome.setReadOnly(True)
+        self.Welcome.setStyleSheet('background-color: black;'
+                                'border-style: solid;'
+                                'color: white')
+        self.Welcome.setFont(QtGui.QFont('Segoe UI Black', 12))
+        self.Welcome.setObjectName("News")
+        self.Welcome.hide()
 
         self.pushButton = QtWidgets.QPushButton(Form)
         self.pushButton.setStyleSheet('background-color: grey')
@@ -125,6 +137,11 @@ class Ui_Form(object):
             news_string = news_string + ("● " + each.text + "\n\n")
         self.textEdit2.setText(news_string)
 
+    def getWelcome(self):
+
+        self.News.setText(self.greeting)
+        self.Welcome.show()
+
     def show_all(self):
         weather = Weather()
         location = weather.lookup_by_location('Moscow')
@@ -134,6 +151,7 @@ class Ui_Form(object):
         self.lcd.display(strftime("%H" + ":" + "%M"))
         text = str(condition.text())
         print(text)
+        self.getWelcome(self)
         if 'loudy' in text:
             self.label.show()
         else:
