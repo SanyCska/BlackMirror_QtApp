@@ -124,9 +124,9 @@ class Ui_MainWindow(object):
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
         self.getWelcome()
-        self.getNews()
+        # self.getNews()
         self.getTime()
-        self.showWeather()
+        # self.showWeather()
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
@@ -140,6 +140,10 @@ class Ui_MainWindow(object):
 
         self.ClockLCD.display(text)
         self.ClockLCD.show()
+
+    def city(self, string):
+        self.city = string
+        print(self.city)
 
     def getNews(self):
         html = urlopen('https://yandex.ru')
@@ -184,6 +188,7 @@ class Ui_MainWindow(object):
         self.TempLCD.show()
         self.Weather.show()
 
+
 class MyThread(Thread):
     def __init__(self, f):
         Thread.__init__(self)
@@ -202,9 +207,22 @@ class MyThread(Thread):
                 if data == b'Moscow':
                     self.f.message2.emit('Moscow')
 
+
+class MyThread2(Thread):
+    def __init__(self, f):
+        Thread.__init__(self)
+        self.f = f
+
+    def run(self):
+        self.f.message2.emit()
+
+
 class foo(QObject):
     message = pyqtSignal()
     message2 = pyqtSignal(str)
+
+class user(QObject):
+    message = pyqtSignal(str)
 
 
 if __name__ == "__main__":
@@ -214,9 +232,16 @@ if __name__ == "__main__":
     ui = Ui_MainWindow()
     ui.setupUi(MainWindow)
     MainWindow.showFullScreen()
-    # f = foo()
-    # f.message.connect(ui.showWeather)
-    # f.message2.connect(ui.city)
-    # t = MyThread(f)
-    # t.start()
+    f = foo()
+    f.message.connect(ui.showWeather)
+    f.message2.connect(ui.city)
+    thread1 = MyThread(f)
+    thread1.start()
+    auth = user()
+    user.message.connect(ui.getWelcome)
+    thread2 = MyThread2(auth)
+    thread2.start()
+
+
+
     sys.exit(app.exec_())
