@@ -196,7 +196,7 @@ if __name__ == "__main__":
     MainWindow = QtWidgets.QMainWindow()
     ui = Ui_MainWindow()
     ui.setupUi(MainWindow)
-    MainWindow.show()
+    MainWindow.showFullScreen()
     # f = foo()
     # f.message.connect(ui.showWeather)
     # f.message2.connect(ui.city)
