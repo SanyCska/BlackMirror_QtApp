@@ -18,7 +18,7 @@ tcpSerSock.listen(5)  # устанавливаем максимальное чи
 
 class Ui_MainWindow(object):
     city = ''
-    greeting = 'Welcome to our app'
+    greeting = 'Welcome to our app, '
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.setStyleSheet('background-color: black')
@@ -145,6 +145,12 @@ class Ui_MainWindow(object):
         self.city = string
         print(self.city)
 
+    def greet(self, string):
+        self.greeting = self.greeting + string
+        print(self.greeting)
+        self.getWelcome()
+
+
     def getNews(self):
         html = urlopen('https://yandex.ru')
         bsObj = BeautifulSoup(html.read(), 'html.parser')
@@ -214,7 +220,8 @@ class MyThread2(Thread):
         self.f = f
 
     def run(self):
-        self.f.message2.emit()
+        # self.greeting =  "Ty pidor"
+        self.f.message3.emit("NAME")
 
 
 class foo(QObject):
@@ -222,7 +229,7 @@ class foo(QObject):
     message2 = pyqtSignal(str)
 
 class user(QObject):
-    message = pyqtSignal(str)
+    message3 = pyqtSignal(str)
 
 
 if __name__ == "__main__":
@@ -238,10 +245,8 @@ if __name__ == "__main__":
     thread1 = MyThread(f)
     thread1.start()
     auth = user()
-    user.message.connect(ui.getWelcome)
+    auth.message3.connect(ui.greet)
     thread2 = MyThread2(auth)
     thread2.start()
-
-
 
     sys.exit(app.exec_())
