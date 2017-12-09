@@ -1,20 +1,29 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from time import strftime
+import vk
+import time
 from weather import Weather
 from threading import Thread #Потоки
 from PyQt5.QtCore import QObject, pyqtSignal, QTime
-from socket import *
+import socket
 from urllib.request import urlopen
 from bs4 import BeautifulSoup
 import sys
 
-HOST = 'localhost'  # адрес хоста (сервера) пустой означает использование любого доступного адреса
-PORT = 21111  # номер порта на котором работает сервер
-BUFSIZ = 1024  # размер буфера 1Кбайт
-ADDR = (HOST, PORT)  # адрес сервера
-tcpSerSock = socket(AF_INET, SOCK_STREAM)
-tcpSerSock.bind(ADDR)  # связываем сокет с адресом
-tcpSerSock.listen(5)  # устанавливаем максимальное число клиентов одновременно обслуживаемых
+# HOST = 'localhost'  # адрес хоста (сервера) пустой означает использование любого доступного адреса
+# PORT = 21111  # номер порта на котором работает сервер
+# BUFSIZ = 1024  # размер буфера 1Кбайт
+# ADDR = (HOST, PORT)  # адрес сервера
+# tcpSerSock = socket(AF_INET, SOCK_STREAM)
+# tcpSerSock.bind(ADDR)  # связываем сокет с адресом
+# tcpSerSock.listen(5)  # устанавливаем максимальное число клиентов одновременно обслуживаемых
+
+host = "192.168.1.68"
+# host = "localhost"
+port=3000
+s=socket.socket()
+s.bind((host, port))
+s.listen(10)
 
 class Ui_MainWindow(object):
     city = ''
@@ -77,15 +86,16 @@ class Ui_MainWindow(object):
         self.Welcome.setFont(QtGui.QFont('Segoe UI Black', 18))
         self.Welcome.setObjectName("Welcome")
         self.Welcome.hide()
-        #
-        # self.Schedule = QtWidgets.QTextEdit(self.centralwidget)
-        # self.Schedule.setGeometry(QtCore.QRect(1230, 450, 531, 991))
-        # self.Schedule.setReadOnly(True)
-        # self.Schedule.setStyleSheet('background-color: black;'
-        #                         'border-style: solid;'
-        #                         'color: white')
-        # self.Schedule.setFont(QtGui.QFont('Segoe UI Black', 12))
-        # self.Schedule.setObjectName("Schedule")
+
+        #тут описываем сам текст инпут для расписания
+        self.Schedule = QtWidgets.QTextEdit(self.centralwidget)
+        self.Schedule.setGeometry(QtCore.QRect(1230, 450, 531, 991))
+        self.Schedule.setReadOnly(True)
+        self.Schedule.setStyleSheet('background-color: black;'
+                               'border-style: solid;'
+                               'color: white')
+        self.Schedule.setFont(QtGui.QFont('Segoe UI Black', 12))
+        self.Schedule.setObjectName("Schedule")
 
         self.Weather = QtWidgets.QTextEdit(self.centralwidget)
         self.Weather.setGeometry(QtCore.QRect(600, 300, 300, 100))
@@ -123,6 +133,7 @@ class Ui_MainWindow(object):
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
+        # self.getSchedule('bmstuinformer', 'сегодня')
         self.getWelcome()
         # self.getNews()
         self.getTime()
@@ -194,6 +205,16 @@ class Ui_MainWindow(object):
         self.TempLCD.show()
         self.Weather.show()
 
+    def getSchedule(self, domain,
+                    message):  # пришлось оставить self, иначе без него питон не понимает, что такое self.Schedule.setText
+        session = vk.Session(
+            access_token='a3ec79c002fbb6b20a533950700e595e6e50d54b196346bd9e3f283e78a797e7cdca5fb8e1b7fe327e8bf')
+        vkapi = vk.API(session)
+        vkapi.messages.send(domain=domain, message=message)
+        time.sleep(5)
+        response_in = vkapi.messages.get(count=1)
+        self.Schedule.setText(response_in[1]['body'])
+
 
 class MyThread(Thread):
     def __init__(self, f):
@@ -201,17 +222,27 @@ class MyThread(Thread):
         self.f = f
 
     def run(self):
-        tcpCliSock, addr = tcpSerSock.accept()
-        print('Connected from: {}'.format(addr))
+        # tcpCliSock, addr = tcpSerSock.accept()
+        # print('Connected from: {}'.format(addr))
+        # while True:
+        #     data = tcpCliSock.recv(BUFSIZ)
+        #     data.decode('utf8')
+        #     if data:
+        #         print(data)
+        #         if data == b'1':
+        #             self.f.message.emit()
+        #         if data == b'Moscow':
+        #             self.f.message2.emit('Moscow')
         while True:
-            data = tcpCliSock.recv(BUFSIZ)
-            data.decode('utf8')
-            if data:
-                print(data)
-                if data == b'1':
-                    self.f.message.emit()
-                if data == b'Moscow':
-                    self.f.message2.emit('Moscow')
+            c, addr = s.accept()
+            print("\nconnection successful with " + str(addr) + "\n\n")
+            data = c.recv(1024)
+            # decoded_data=data.decode("utf-8")
+            decoded_data = data.decode()
+            if not decoded_data:
+                print("connection with " + str(addr) + " broken\n")
+            else:
+                print("-> " + decoded_data + "\n")
 
 
 class MyThread2(Thread):
