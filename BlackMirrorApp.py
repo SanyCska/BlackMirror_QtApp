@@ -1,3 +1,4 @@
+#
 from PyQt5 import QtCore, QtGui, QtWidgets
 from time import strftime
 import vk
@@ -9,7 +10,10 @@ import socket
 from urllib.request import urlopen
 from bs4 import BeautifulSoup
 import sys
-
+sys.path.append('/home/pi/code/blackmirror_server/web_server')
+import voicer
+import database as db
+import json
 # HOST = 'localhost'  # адрес хоста (сервера) пустой означает использование любого доступного адреса
 # PORT = 21111  # номер порта на котором работает сервер
 # BUFSIZ = 1024  # размер буфера 1Кбайт
@@ -18,10 +22,10 @@ import sys
 # tcpSerSock.bind(ADDR)  # связываем сокет с адресом
 # tcpSerSock.listen(5)  # устанавливаем максимальное число клиентов одновременно обслуживаемых
 
-host = "192.168.1.68"
+host = "192.168.43.93"
 # host = "localhost"
-port=3000
-s=socket.socket()
+port = 3000
+s = socket.socket()
 s.bind((host, port))
 s.listen(10)
 
@@ -77,15 +81,15 @@ class Ui_MainWindow(object):
         self.ClockLCD.setObjectName("ClockLDC")
         self.ClockLCD.hide()
 
-        self.Welcome = QtWidgets.QTextEdit(self.centralwidget)
-        self.Welcome.setGeometry(QtCore.QRect(QtCore.QRect(1230, 450, 531, 991)))
-        self.Welcome.setReadOnly(True)
-        self.Welcome.setStyleSheet('background-color: black;'
-                                'border-style: solid;'
-                                'color: white')
-        self.Welcome.setFont(QtGui.QFont('Segoe UI Black', 18))
-        self.Welcome.setObjectName("Welcome")
-        self.Welcome.hide()
+   #      self.Welcome = QtWidgets.QTextEdit(self.centralwidget)
+ #        self.Welcome.setGeometry(QtCore.QRect(QtCore.QRect(1230, 450, 531, 991)))
+      #   self.Welcome.setReadOnly(True)
+#          self.Welcome.setStyleSheet('background-color: black;'
+  #                               'border-style: solid;'
+#                                 'color: white')
+  #       self.Welcome.setFont(QtGui.QFont('Segoe UI Black', 18))
+    #     self.Welcome.setObjectName("Welcome")
+    #     self.Welcome.hide()
 
         #тут описываем сам текст инпут для расписания
         self.Schedule = QtWidgets.QTextEdit(self.centralwidget)
@@ -94,7 +98,7 @@ class Ui_MainWindow(object):
         self.Schedule.setStyleSheet('background-color: black;'
                                'border-style: solid;'
                                'color: white')
-        self.Schedule.setFont(QtGui.QFont('Segoe UI Black', 12))
+        self.Schedule.setFont(QtGui.QFont('Segoe UI Black', 20))
         self.Schedule.setObjectName("Schedule")
 
         self.Weather = QtWidgets.QTextEdit(self.centralwidget)
@@ -112,7 +116,7 @@ class Ui_MainWindow(object):
         self.News.setStyleSheet('background-color: black;'
                                 'border-style: solid;'
                                 'color: white')
-        self.News.setFont(QtGui.QFont('Segoe UI Black', 12))
+        self.News.setFont(QtGui.QFont('Segoe UI Black', 20))
         self.News.setObjectName("News")
         self.News.hide()
 
@@ -133,11 +137,11 @@ class Ui_MainWindow(object):
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
-        # self.getSchedule('bmstuinformer', 'сегодня')
-        self.getWelcome()
-        # self.getNews()
+        self.getSchedule('bmstuinformer', 'сегодня')
+        #self.getWelcome()
+        self.getNews()
         self.getTime()
-        # self.showWeather()
+        self.showWeather()
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
@@ -156,10 +160,10 @@ class Ui_MainWindow(object):
         self.city = string
         print(self.city)
 
-    def greet(self, string):
-        self.greeting = self.greeting + string
-        print(self.greeting)
-        self.getWelcome()
+    #def greet(self, string):
+     #   self.greeting = self.greeting + string
+      #  print(self.greeting)
+       # self.getWelcome()
 
 
     def getNews(self):
@@ -174,10 +178,10 @@ class Ui_MainWindow(object):
         self.News.setText(news_string)
         self.News.show()
 
-    def getWelcome(self):
+    #def getWelcome(self):
 
-        self.Welcome.setText(self.greeting)
-        self.Welcome.show()
+     #   self.Welcome.setText(self.greeting)
+      #  self.Welcome.show()
 
     def showWeather(self):
         weather = Weather()
@@ -205,10 +209,8 @@ class Ui_MainWindow(object):
         self.TempLCD.show()
         self.Weather.show()
 
-    def getSchedule(self, domain,
-                    message):  # пришлось оставить self, иначе без него питон не понимает, что такое self.Schedule.setText
-        session = vk.Session(
-            access_token='a3ec79c002fbb6b20a533950700e595e6e50d54b196346bd9e3f283e78a797e7cdca5fb8e1b7fe327e8bf')
+    def getSchedule(self, domain,message):  # пришлось оставить self, иначе без него питон не понимает, что такое self.Schedule.setText
+        session = vk.AuthSession("6104444","+79672770207","red14yn",scope='messages')
         vkapi = vk.API(session)
         vkapi.messages.send(domain=domain, message=message)
         time.sleep(5)
@@ -233,12 +235,15 @@ class MyThread(Thread):
         #             self.f.message.emit()
         #         if data == b'Moscow':
         #             self.f.message2.emit('Moscow')
+        cur,con = db.connection()
         while True:
             c, addr = s.accept()
             print("\nconnection successful with " + str(addr) + "\n\n")
             data = c.recv(1024)
             # decoded_data=data.decode("utf-8")
             decoded_data = data.decode()
+            recieved_dict = json.loads(decoded_data)
+            db.update_reminders(cur,con,recieved_dict['text'],recieved_dict['destination'])
             if not decoded_data:
                 print("connection with " + str(addr) + " broken\n")
             else:
@@ -252,7 +257,42 @@ class MyThread2(Thread):
 
     def run(self):
         # self.greeting =  "Ty pidor"
-        self.f.message3.emit("NAME")
+       # self.f.message3.emit("NAME")
+        #pass
+        cur,con  = db.connection()
+        last_seen = db.get_lastname(cur)
+        while(True):
+            now_seen = db.get_lastname(cur)
+            if now_seen == last_seen:
+                pass
+            else:
+                last_seen = now_seen
+                if now_seen == 'evv':
+                    voicer.voice_start('Привет Владимир')
+                    ids,texts = db.get_notreaded(cur,con,'evv')
+                    if len(ids) != 0:
+                        voicer.voice_start('Вован, у тебя {0} новых сообщений'.format(len(ids)))
+                        for text in texts:
+                            voicer.voice_start(text)
+                        db.set_readed(cur,con,ids)
+                elif now_seen == 'map':
+                    voicer.voice_start('Привет Антон')
+                    ids,texts = db.get_notreaded(cur,con,'map')
+                    if len(ids) != 0:
+                        voicer.voice_start('Антоха, у тебя {0} новых сообщений'.format(len(ids)))
+                        for text in texts:
+                            voicer.voice_start(text)
+                        db.set_readed(cur,con,ids)
+                elif now_seen == 'sav':
+                    voicer.voice_start('Привет Александр')
+                    ids,texts = db.get_notreaded(cur,con,'sav')
+                    if len(ids) != 0:
+                        voicer.voice_start('Санёк, у тебя {0} новых сообщений'.format(len(ids)))
+                        for text in texts:
+                            voicer.voice_start(text)
+                        db.set_readed(cur,con,ids)
+                # self.f.message.emit(now_seen)
+
 
 
 class foo(QObject):
@@ -276,7 +316,7 @@ if __name__ == "__main__":
     thread1 = MyThread(f)
     thread1.start()
     auth = user()
-    auth.message3.connect(ui.greet)
+    #auth.message3.connect(ui.greet)
     thread2 = MyThread2(auth)
     thread2.start()
 
